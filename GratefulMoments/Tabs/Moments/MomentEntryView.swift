@@ -14,6 +14,10 @@ struct MomentEntryView: View {
     @State private var note = ""
     @State private var imageData: Data?
     @State private var newImage: PhotosPickerItem?
+    @State private var isShowingCancelConfirmation = false
+    
+    @Environment(\.dismiss) private var dismiss
+    @Environment(DataContainer.self) private var dataContainer
     
     var body: some View {
         NavigationStack {
@@ -22,6 +26,40 @@ struct MomentEntryView: View {
             }
             .scrollDismissesKeyboard(.interactively)
             .navigationTitle("Grateful For")
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel", systemImage: "xmark") {
+                        isShowingCancelConfirmation = true
+                    }
+                    .confirmationDialog("Discard Moment", isPresented: $isShowingCancelConfirmation) {
+                        Button("Discard Moment", role: .destructive) {
+                            if title.isEmpty, note.isEmpty, imageData == nil {
+                                dismiss()
+                            } else {
+                                isShowingCancelConfirmation = true
+                            }
+                        }
+                    }
+                }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Add", systemImage: "checkmark") {
+                        let newMoment = Moment(
+                            title: title,
+                            note: note,
+                            imageData: imageData,
+                            timestamp: .now
+                        )
+                        dataContainer.context.insert(newMoment)
+                        do {
+                            try dataContainer.context.save()
+                            dismiss()
+                        } catch {
+                            // Don't dismiss
+                        }
+                    }
+                }
+            }
+            .disabled(title.isEmpty)
         }
     }
     
