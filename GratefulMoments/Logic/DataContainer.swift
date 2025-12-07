@@ -13,6 +13,7 @@ import SwiftUI
 @MainActor
 class DataContainer {
     let modelContainer: ModelContainer
+    let badgeManager: BadgeManager
 
     var context: ModelContext {
         modelContainer.mainContext
@@ -22,6 +23,7 @@ class DataContainer {
     init(includeSampleMoments: Bool = false) {
         let schema = Schema([
            Moment.self,
+           Badge.self
        ])
 
 
@@ -30,9 +32,12 @@ class DataContainer {
 
        do {
            modelContainer = try ModelContainer(for: schema, configurations: [modelConfiguration])
+           badgeManager = BadgeManager(modelContainer: modelContainer)
+           
+           try badgeManager.loadBadgesIfNeeded()
 
            if includeSampleMoments {
-               loadSampleMoments()
+               try loadSampleMoments()
            }
            try context.save()
        } catch {
@@ -40,15 +45,16 @@ class DataContainer {
        }
     }
     
-    private func loadSampleMoments() {
-            for moment in Moment.sampleData {
-                context.insert(moment)
-            }
+    private func loadSampleMoments() throws {
+        for moment in Moment.sampleData {
+            context.insert(moment)
+            try badgeManager.unlockBadges(newMoment: moment)
         }
+    }
     
     static let sampleContainer: DataContainer = {
-            DataContainer(includeSampleMoments: true)
-        }()
+        DataContainer(includeSampleMoments: true)
+    }()
 }
 
 extension View {

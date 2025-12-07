@@ -55,6 +55,7 @@ struct MomentEntryView: View {
                         dataContainer.context.insert(newMoment)
                         do {
                             try dataContainer.context.save()
+                            try dataContainer.badgeManager.unlockBadges(newMoment: newMoment)
                             dismiss()
                         } catch {
                             // Don't dismiss
