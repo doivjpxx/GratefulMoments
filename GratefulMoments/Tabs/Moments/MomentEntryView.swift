@@ -15,7 +15,8 @@ struct MomentEntryView: View {
     @State private var imageData: Data?
     @State private var newImage: PhotosPickerItem?
     @State private var isShowingCancelConfirmation = false
-    
+
+
     @Environment(\.dismiss) private var dismiss
     @Environment(DataContainer.self) private var dataContainer
     
@@ -29,18 +30,20 @@ struct MomentEntryView: View {
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel", systemImage: "xmark") {
-                        isShowingCancelConfirmation = true
+                        if title.isEmpty, note.isEmpty, imageData == nil {
+                            dismiss()
+                        } else {
+                            isShowingCancelConfirmation = true
+                        }
                     }
                     .confirmationDialog("Discard Moment", isPresented: $isShowingCancelConfirmation) {
                         Button("Discard Moment", role: .destructive) {
-                            if title.isEmpty, note.isEmpty, imageData == nil {
-                                dismiss()
-                            } else {
-                                isShowingCancelConfirmation = true
-                            }
+                            dismiss()
                         }
                     }
                 }
+
+
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Add", systemImage: "checkmark") {
                         let newMoment = Moment(
@@ -57,28 +60,29 @@ struct MomentEntryView: View {
                             // Don't dismiss
                         }
                     }
+                    .disabled(title.isEmpty)
                 }
             }
-            .disabled(title.isEmpty)
         }
     }
-    
-    private var photoPicker : some View {
+
+
+    private var photoPicker: some View {
         PhotosPicker(selection: $newImage) {
             Group {
                 if let imageData, let uiImage = UIImage(data: imageData) {
-                                    Image(uiImage: uiImage)
-                                        .resizable()
-                                        .scaledToFit()
+                    Image(uiImage: uiImage)
+                        .resizable()
+                        .scaledToFit()
                 } else {
                     Image(systemName: "photo.badge.plus.fill")
                         .font(.largeTitle)
                         .frame(height: 250)
                         .frame(maxWidth: .infinity)
                         .background(Color(white: 0.4, opacity: 0.32))
-                        .clipShape(RoundedRectangle(cornerRadius: 16))
                 }
             }
+            .clipShape(RoundedRectangle(cornerRadius: 16))
         }
         .onChange(of: newImage) {
             guard let newImage else { return }
@@ -87,25 +91,31 @@ struct MomentEntryView: View {
             }
         }
     }
-    
-    var contentStack : some View {
+
+
+    var contentStack: some View {
         VStack(alignment: .leading) {
             TextField(text: $title) {
-                Text("Title (required)")
+                Text("Title (Required)")
             }
             .font(.title.bold())
             .padding(.top, 48)
             Divider()
+
+
             TextField("Log your small wins", text: $note, axis: .vertical)
-                            .multilineTextAlignment(.leading)
-                            .lineLimit(5...Int.max)
-            
+                .multilineTextAlignment(.leading)
+                .lineLimit(5...Int.max)
+
+
             photoPicker
         }
         .padding()
     }
 }
 
+
 #Preview {
     MomentEntryView()
+        .sampleDataContainer()
 }
