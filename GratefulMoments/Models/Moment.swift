@@ -16,13 +16,14 @@ class Moment {
     var note: String
     var imageData: Data?
     var timestamp: Date
-
+    var badges: [Badge]
 
     init(title: String, note: String, imageData: Data? = nil, timestamp: Date = .now) {
         self.title = title
         self.note = note
         self.imageData = imageData
         self.timestamp = timestamp
+        self.badges = []
     }
 
 

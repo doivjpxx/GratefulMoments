@@ -42,6 +42,11 @@ struct Hexagon<Content: View>: View {
                        .foregroundStyle(borderColor)
                }
         .frame(width: layout.size, height: layout.size)
+        .overlay(alignment: .topTrailing) {
+            if let moment {
+                HexagonAccessoryView(moment: moment, hexagonLayout: layout)
+            }
+        }
     }
 }
 
