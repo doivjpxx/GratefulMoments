@@ -13,7 +13,7 @@ struct ContentView: View {
             Tab("Moments", image: "MomentsTab") {
                 MomentsView()
             }
-            Tab("Achievements", image: "medal.fill") {
+            Tab("Achievements", systemImage: "medal.fill") {
                 AchievementsView()
             }
         }

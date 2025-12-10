@@ -1,0 +1,34 @@
+//
+//  StreakCalculator.swift
+//  GratefulMoments
+//
+//  Created by Phong Hy on 10/12/25.
+//
+
+import Foundation
+
+struct StreakCalculator {
+    let calendar = Calendar.current
+
+    /// Days are measured from the end of the day, rather than whatever time of day it is currently
+    func calculateStreak(for moments: [Moment]) -> Int {
+        let startOfToday = calendar.startOfDay(for: .now)
+        let endOfToday = calendar.date(byAdding: DateComponents(day: 1, second: -1), to: startOfToday)!
+
+        let daysAgoArray = moments
+            .reversed()
+            .map(\.timestamp)
+            .map { calendar.dateComponents([.day], from: $0, to: endOfToday) }
+            .compactMap { $0.day }
+
+        var streak = 0
+        for daysAgo in daysAgoArray {
+            if daysAgo == streak {
+                streak += 1
+            }
+        }
+
+
+        return streak
+    }
+}
