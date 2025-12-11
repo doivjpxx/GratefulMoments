@@ -26,6 +26,7 @@ struct AchievementsView: View {
             }
             .navigationTitle("Achievements")
         }
+        .dynamicTypeSize(...DynamicTypeSize.xxxLarge)
     }
     
     func header(_ text: String) -> some View {

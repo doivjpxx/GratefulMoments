@@ -30,6 +30,7 @@ struct HexagonAccessoryView: View {
                     .bold()
                     .frame(width: size * 0.5, height: size * 0.5)
                     .padding(8)
+                    .minimumScaleFactor(0.3)
                     .background {
                         Image("Blank")
                             .resizable()
@@ -68,6 +69,7 @@ struct HexagonAccessoryView: View {
 }
 
 #Preview("Multiple badges") {
-    MomentHexagonView(moment: .imageSample, layout: .large)
+    MomentHexagonView(moment: .imageSample, layout: .standard)
+        .dynamicTypeSize(.large)
         .sampleDataContainer()
 }
